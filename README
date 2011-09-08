@@ -1,0 +1,4 @@
+This project aims to provide the option to make Django a failclose system.
+That means that instead of giving free access to every view by default and
+then restricting it on a case by case basis, access to all views will be
+blocked by default and permissions are given on a case by case basis.
