@@ -21,14 +21,14 @@ def is_safe(view, rules=None):
                     'in your settings.py'
             )
 
-    # retrieving the view's app name and the corresponding views list
+    # retrieving the view's app name and the corresponding safe_views list
     app_name = view.__module__.split('.')[-2]
-    views = rules.get(app_name)
+    safe_views = rules.get(app_name)
 
-    if views is not None:
-        # if the views list is empty, it means that all views
+    if safe_views is not None:
+        # if the safe_views list is empty, it means that all views
         # are whitelisted
-        if not views or view.__name__ in views:
+        if not safe_views or view.__name__ in safe_views:
             return True
 
     if getattr(view, 'safe', None):
