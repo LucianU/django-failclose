@@ -7,8 +7,8 @@ setup(
     description='Application that makes Django a failclose system',
     author='Lucian Ursu',
     author_email='lucian.ursu@gmail.com',
-    url='',
-    download_url='',
+    url='https://github.com/LucianU/django-failclose',
+    download_url='https://github.com/LucianU/django-failclose/tarball/master',
     classifiers=[
         'Programming Language :: Python',
         'License :: OSI Approved :: MIT License',
