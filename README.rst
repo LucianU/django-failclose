@@ -20,6 +20,16 @@ Setup
 #. To define a global permissions table, create a Python module with a ``RULES``
    dictionary. Put the import path to that module in the ``PERMISSIONS_MODULE``
    setting.
+#. Because the project name can be a key in the ``RULES`` dictionary, it needs to
+   be easily accessible to django-failclose for checking. For that you can set
+   ``PROJECT_NAME`` in your ``settings.py`` like this::
+
+        PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+        PROJECT_NAME = os.path.basename(PROJECT_ROOT)
+
+   provided that your settings module is in your project's root. If ``PROJECT_NAME``
+   is not set, django-failclose will try to extract the project name from your 
+   ``ROOT_URLCONF``.
 
 Usage
 =====
