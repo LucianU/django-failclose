@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
+from django.db.models.loading import get_app
 
 def safe(view):
     """Marks a view as safe to be called"""
@@ -21,8 +22,10 @@ def is_safe(view, rules=None):
                     'in your settings.py'
             )
 
+    _validate_rules(rules)
+
     # retrieving the view's app name and the corresponding safe_views list
-    app_name = view.__module__.split('.')[-2]
+    app_name = _get_app_name(view)
     safe_views = rules.get(app_name)
 
     if safe_views is not None:
@@ -35,3 +38,45 @@ def is_safe(view, rules=None):
         return True
 
     return False
+
+def _get_app_name(view):
+    path_components = view.__module__.split('.')
+    project_name = _get_project_name()
+
+    for comp in path_components:
+        if get_app(comp, emptyOK=True) is not None:
+            return comp
+
+    if project_name in path_components:
+        return project_name
+
+    raise ImproperlyConfigured(
+            "Couldn't find the app the view %s belongs to."
+            "The view's import path is %s" % (view, view.__module__)
+    )
+
+def _get_project_name():
+    PROJECT_NAME = getattr(settings, 'PROJECT_NAME', None)
+
+    if PROJECT_NAME:
+        return PROJECT_NAME
+    else:
+        parts = settings.ROOT_URLCONF.split('.')
+        if len(parts) != 2:
+            raise ImproperlyConfigured(
+                    "You've changed the structure of ROOT_URLCONF, "
+                    "so you need to set PROJECT_NAME in your settings.py"
+            )
+        return parts[0]
+
+def _validate_rules(rules):
+    project_name = _get_project_name()
+
+    for app in rules.iterkeys():
+        if get_app(app, emptyOK=True) is None and app != project_name:
+            raise ImproperlyConfigured(
+                    "The app name %s from your permission rules"
+                    "could not be found in the list of installed apps"
+                    "and didn't match your project name (%s) either"
+                    % (app, project_name)
+            )
