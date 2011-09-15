@@ -44,7 +44,11 @@ def _get_app_name(view):
     project_name = _get_project_name()
 
     for comp in path_components:
-        if get_app(comp, emptyOK=True) is not None:
+        try:
+            get_app(comp, emptyOK=True)
+        except ImproperlyConfigured:
+            pass
+        else:
             return comp
 
     if project_name in path_components:
@@ -73,10 +77,8 @@ def _validate_rules(rules):
     project_name = _get_project_name()
 
     for app in rules.iterkeys():
-        if get_app(app, emptyOK=True) is None and app != project_name:
-            raise ImproperlyConfigured(
-                    "The app name %s from your permission rules"
-                    "could not be found in the list of installed apps"
-                    "and didn't match your project name (%s) either"
-                    % (app, project_name)
-            )
+        try:
+            get_app(app, emptyOK=True)
+        except ImproperlyConfigured:
+            if app != project_name:
+                raise
