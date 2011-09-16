@@ -18,7 +18,7 @@ def is_safe(view, rules=None):
             rules = import_module(settings.PERMISSIONS_MODULE).RULES
         else:
             raise ImproperlyConfigured(
-                    'You need to specify a PERMISSIONS_MODULE'
+                    'You need to specify a PERMISSIONS_MODULE '
                     'in your settings.py'
             )
 
