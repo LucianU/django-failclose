@@ -83,9 +83,8 @@ class GetAppNameTest(TestCase):
         """Checks that the app name of an app view is
         retrieved correctly"""
 
-        from django.contrib.auth.views import login
-        self.app_view = login
-        self.assertEqual(utils._get_app_name(self.app_view), 'auth')
+        self.app_view = ugly
+        self.assertEqual(utils._get_app_name(self.app_view), 'failclose')
 
     def test_with_global_view(self):
         """Checks that the app name of a global view is
@@ -115,8 +114,7 @@ class ValidateRulesTest(TestCase):
         """Verifies that valid rules don't raise an error"""
 
         rules = {
-            'sessions': [],
-            'auth': ['login', 'logout'],
+            'failclose': ['pretty', 'ugly'],
             'foobar': [],
         }
         self.assertEqual(utils._validate_rules(rules), None)
@@ -126,7 +124,7 @@ class ValidateRulesTest(TestCase):
 
         rules = {
             'shire': ['bow', 'arrow'],
-            'auth': ['login', 'logout'],
+            'failclose': ['pretty', 'ugly'],
         }
         self.assertRaises(ImproperlyConfigured, utils._validate_rules, rules)
 
@@ -139,8 +137,7 @@ class IsSafeTest(TestCase):
         self.old_permissions_module = getattr(settings, 'PERMISSIONS_MODULE', None)
         settings.PERMISSIONS_MODULE = ''
 
-        from django.contrib.auth.views import login
-        self.view = login
+        self.view = ugly
 
     def test_with_no_rules(self):
         """Checks that calling 'is_safe' without rules
@@ -164,7 +161,7 @@ class IsSafeTest(TestCase):
         confirmed safe"""
 
         rules = {
-            'auth': ['login']
+            'failclose': ['ugly']
         }
         self.assertTrue(utils.is_safe(self.view, rules=rules))
 
@@ -173,7 +170,7 @@ class IsSafeTest(TestCase):
         is considered safe itself"""
 
         rules = {
-            'auth': []
+            'failclose': []
         }
         self.assertTrue(utils.is_safe(self.view, rules=rules))
 
