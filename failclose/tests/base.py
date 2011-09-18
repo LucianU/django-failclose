@@ -179,7 +179,7 @@ class FailCloseMiddlewareTest(TestCase):
 
         request = http.HttpRequest()
 
-        response = self.middleware.process_view(request, pretty)
+        response = self.middleware.process_view(request, pretty, (), {})
         self.assertEqual(response.status_code, 200)
 
     def test_unsafe_view(self):
@@ -188,10 +188,12 @@ class FailCloseMiddlewareTest(TestCase):
 
         request = http.HttpRequest()
 
-        response = self.middleware.process_view(request, ugly)
+        response = self.middleware.process_view(request, ugly, (), {})
         self.assertEqual(response.status_code, 403)
 
 class FailCloseAppTest(TestCase):
+    urls = 'failclose.tests.urls'
+
     def setUp(self):
         self.client = Client()
         self.old_permissions_module = getattr(settings, 'PERMISSIONS_MODULE', None)
