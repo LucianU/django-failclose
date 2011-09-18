@@ -1,3 +1,5 @@
+import functools
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.importlib import import_module
@@ -5,9 +7,12 @@ from django.db.models.loading import get_app
 
 def safe(view):
     """Marks a view as safe to be called"""
+    @functools.wraps(view)
+    def wrapper(*args, **kwargs):
+        return view(*args, **kwargs)
+    wrapper.safe = True
 
-    view.safe = True
-    return view
+    return wrapper
 
 def is_safe(view, rules=None):
     """Checks if a view has been marked as safe, and thus

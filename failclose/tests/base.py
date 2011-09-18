@@ -137,7 +137,6 @@ class IsSafeTest(TestCase):
     def test_decorated_view(self):
         self.decorated_view = utils.safe(self.view)
         self.assertTrue(utils.is_safe(self.decorated_view, rules={'sessions': []}))
-        del self.view.safe
 
     def test_view_in_rules(self):
         rules = {
