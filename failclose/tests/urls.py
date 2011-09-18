@@ -3,7 +3,10 @@ from django.template import RequestContext, Template
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse
 
+from failclose.utils import safe
+
 @never_cache
+@safe
 def pretty(request):
     t = Template("Salutations from the pretty view!")
     return HttpResponse(t.render(RequestContext(request)))
