@@ -5,11 +5,18 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+import sys
+import types
+
+from django import http
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.client import Client
 
 from failclose import utils
+from failclose.tests.urls import pretty, ugly
 from failclose.middlewares import FailCloseMiddleware
 
 class SafeDecoratorTest(TestCase):
@@ -163,4 +170,53 @@ class IsSafeTest(TestCase):
             settings.PERMISSIONS_MODULE = self.old_permissions_module
 
 class FailCloseMiddlewareTest(TestCase):
-    pass
+    def setUp(self):
+        self.middleware = FailCloseMiddleware()
+
+    def test_safe_view(self):
+        """Makes sure that a safe view causes the middleware
+        to return a 200 response"""
+
+        request = http.HttpRequest()
+
+        response = self.middleware.process_view(request, pretty)
+        self.assertEqual(response.status_code, 200)
+
+    def test_unsafe_view(self):
+        """Makes sure that an unsafe view causes the middleware
+        to return a 403 response"""
+
+        request = http.HttpRequest()
+
+        response = self.middleware.process_view(request, ugly)
+        self.assertEqual(response.status_code, 403)
+
+class FailCloseAppTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.old_permissions_module = getattr(settings, 'PERMISSIONS_MODULE', None)
+        settings.PERMISSIONS_MODULE = 'permissions'
+        RULES = {
+            'failclose': ['pretty'],
+        }
+        module = types.ModuleType('permissions')
+        setattr(module, 'RULES', RULES)
+        sys.modules['permissions'] = module
+
+    def test_safe_view(self):
+        path = reverse('failclose.tests.urls.pretty')
+        response = self.client.get(path)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_unsafe_view(self):
+        path = reverse('failclose.tests.urls.ugly')
+        response = self.client.get(path)
+
+        self.assertEqual(response.status_code, 403)
+
+    def tearDown(self):
+        if self.old_permissions_module is not None:
+            settings.PERMISSIONS_MODULE = self.old_permissions_module
+        sys.modules.pop('permissions')
+
