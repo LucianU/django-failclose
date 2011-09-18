@@ -132,11 +132,11 @@ class IsSafeTest(TestCase):
         self.assertRaises(ImproperlyConfigured, utils.is_safe, self.view)
 
     def test_unsafe_view(self):
-        self.assertFalse(utils.is_safe(self.view, rules={'sessions': []}))
+        self.assertFalse(utils.is_safe(self.view, rules={}))
 
     def test_decorated_view(self):
         self.decorated_view = utils.safe(self.view)
-        self.assertTrue(utils.is_safe(self.decorated_view, rules={'sessions': []}))
+        self.assertTrue(utils.is_safe(self.decorated_view, rules={}))
 
     def test_view_in_rules(self):
         rules = {
