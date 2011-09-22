@@ -169,7 +169,7 @@ class IsSafeTest(TestCase):
         settings.PROJECT_NAME = 'foobar'
 
         rules = {
-            'foobar': ['login'],
+            'foobar': ['ugly'],
         }
         self.assertFalse(utils.is_safe(self.view, rules=rules))
 
