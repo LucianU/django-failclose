@@ -17,7 +17,7 @@ setup(
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'Framework :: Django',
-        'Topic :: WWW/HTTP',
+        'Topic :: Internet :: WWW/HTTP',
         'Topic :: Utilities',
     ],
 )
