@@ -8,13 +8,11 @@ import types
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from django.test.client import Client
 
 class FailCloseAppTest(TestCase):
     urls = 'failclose.tests.urls'
 
     def setUp(self):
-        self.client = Client()
         self.old_permissions_module = getattr(settings, 'PERMISSIONS_MODULE', None)
         settings.PERMISSIONS_MODULE = 'permissions'
         RULES = {
