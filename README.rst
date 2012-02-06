@@ -51,3 +51,9 @@ A permissions file will look like this::
         'project_name': ['view1', 'view2'], # global views
     }
 
+TODO
+====
+#. Extend the system at the database level. By default, users shouldn't be
+able to access any objects. Permissions should be granted to users and groups
+on a per-instance or per-class level.
+#. Provide functionality that does login attempts throttling
