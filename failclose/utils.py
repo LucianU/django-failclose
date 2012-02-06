@@ -17,9 +17,8 @@ def safe(view):
 def is_safe(view, rules=None):
     """Checks if a view has been marked as safe, and thus
     can be called"""
-
     if rules is None:
-        if settings.PERMISSIONS_MODULE:
+        if getattr(settings, 'PERMISSIONS_MODULE', None) is not None:
             rules = import_module(settings.PERMISSIONS_MODULE).RULES
         else:
             raise ImproperlyConfigured(
